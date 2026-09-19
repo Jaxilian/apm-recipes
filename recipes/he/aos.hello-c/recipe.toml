@@ -1,0 +1,29 @@
+# A recipe the client compiles. https://github.com/Jaxilian/apm-recipes/releases/download/index/hello-c-1.0.0.tar.gz and 71104f31dabe68662449784454bad9b895e2fbdd95aaff8d72f1e3759179809b are filled in by whoever
+# packs src/ into a tarball -- the QEMU harness does, and so does
+# examples/hello-c/pack.sh for a host run.
+
+recipe_version = 1
+
+[package]
+name         = "hello-c"
+organization = "aos"
+version      = "1.0.0"
+release      = 1
+kind         = "bin"
+summary      = "a C program compiled on the machine it is installed on"
+license      = "MIT"
+
+[[source]]
+url    = "https://github.com/Jaxilian/apm-recipes/releases/download/index/hello-c-1.0.0.tar.gz"
+sha256 = "71104f31dabe68662449784454bad9b895e2fbdd95aaff8d72f1e3759179809b"
+strip  = 1
+
+[requires]
+build = ["cc", "make"]
+
+[provides]
+command = ["hello-c"]
+
+[build]
+build   = "make -j$APM_JOBS PREFIX=$APM_PREFIX"
+install = "make install DESTDIR=$APM_DESTDIR PREFIX=$APM_PREFIX"
