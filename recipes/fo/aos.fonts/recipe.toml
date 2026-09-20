@@ -1,0 +1,38 @@
+# Fonts for the machine: DejaVu (the free workhorse) and Liberation
+# (metric-compatible with Arial, Times and Courier, which the web assumes).
+# Data only, so the "build" is a copy and there is nothing to compile --
+# the first package to leave the image, and the one that proves the
+# publish path with nothing at risk. Nothing on the foundation reads
+# fonts; fontconfig, when it arrives as a third-party package, is pointed
+# at share/fonts by its own configuration.
+
+recipe_version = 1
+
+[package]
+name         = "fonts"
+organization = "aos"
+version      = "2.37.0"
+release      = 1
+kind         = "lib"
+summary      = "DejaVu and Liberation fonts"
+license      = "Bitstream-Vera AND OFL-1.1"
+homepage     = "https://dejavu-fonts.github.io/"
+
+[[source]]
+url    = "https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.tar.bz2"
+sha256 = "fa9ca4d13871dd122f61258a80d01751d603b4d3ee14095d65453b4e846e17d7"
+strip  = 1
+
+[[source]]
+url    = "https://github.com/liberationfonts/liberation-fonts/files/7261482/liberation-fonts-ttf-2.1.5.tar.gz"
+sha256 = "7191c669bf38899f73a2094ed00f7b800553364f90e2637010a69c0e268f25d0"
+strip  = 1
+
+[build]
+install = '''
+install -d $APM_DESTDIR/share/fonts/dejavu $APM_DESTDIR/share/fonts/liberation $APM_DESTDIR/share/licenses/fonts
+install -m 644 $APM_SOURCE_1/ttf/*.ttf $APM_DESTDIR/share/fonts/dejavu/
+install -m 644 $APM_SOURCE_2/*.ttf $APM_DESTDIR/share/fonts/liberation/
+install -m 644 $APM_SOURCE_1/LICENSE $APM_DESTDIR/share/licenses/fonts/DejaVu
+install -m 644 $APM_SOURCE_2/LICENSE $APM_DESTDIR/share/licenses/fonts/Liberation
+'''
