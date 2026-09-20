@@ -1,0 +1,55 @@
+# The Rust toolchain: rustc, cargo, the standard library, rustfmt and
+# clippy, from upstream's prebuilt tarball. Those binaries are built
+# against a generic x86-64 and glibc 2.17, so they run on the x86-64-v2 /
+# glibc 2.44 target unmodified. Nothing to compile -- install.sh copies.
+# This is what br2ext/package/aos-rust did on the image, moved to a
+# package so a dev image need not carry 600 MB it can fetch, and so a
+# toolchain update is `apm upgrade rust` rather than a new ISO.
+#
+# rust-docs is left out: several hundred MB of HTML nothing here renders.
+# --disable-ldconfig: install.sh would otherwise run ldconfig on the
+# machine doing the install. install.sh takes --prefix relative to
+# --destdir but --sysconfdir absolute, hence the asymmetry.
+#
+# The linker is gcc's; the foundation image ships it.
+
+recipe_version = 1
+
+[package]
+name         = "rust"
+organization = "aos"
+version      = "1.96.1"
+release      = 1
+kind         = "bin"
+summary      = "the Rust toolchain: rustc, cargo, rustfmt, clippy"
+license      = "MIT OR Apache-2.0"
+homepage     = "https://www.rust-lang.org/"
+
+[[source]]
+url    = "https://static.rust-lang.org/dist/rust-1.96.1-x86_64-unknown-linux-gnu.tar.xz"
+sha256 = "d29ccb1559a177c4e72291f6e5f629de7fe8885e7521ca47802627544b121e95"
+strip  = 1
+
+[requires]
+run = ["gcc"]
+
+[provides]
+command = ["rustc", "cargo", "rustdoc", "rustfmt", "cargo-fmt", "cargo-clippy", "clippy-driver", "rust-gdb", "rust-lldb"]
+
+[build]
+install = '''
+./install.sh \
+	--destdir=$APM_DESTDIR \
+	--prefix=$APM_PREFIX \
+	--sysconfdir=$APM_DESTDIR$APM_PREFIX/etc \
+	--components=rustc,rust-std-x86_64-unknown-linux-gnu,cargo,rustfmt-preview,clippy-preview \
+	--disable-ldconfig
+# install.sh's uninstall bookkeeping references the paths of this build
+# machine; the package manager is what removes packages here.
+rm -rf $APM_DESTDIR$APM_PREFIX/lib/rustlib/uninstall.sh \
+	$APM_DESTDIR$APM_PREFIX/lib/rustlib/install.log \
+	$APM_DESTDIR$APM_PREFIX/lib/rustlib/components \
+	$APM_DESTDIR$APM_PREFIX/lib/rustlib/rust-installer-version
+rm -f $APM_DESTDIR$APM_PREFIX/lib/rustlib/manifest-*
+rm -rf $APM_DESTDIR$APM_PREFIX/share/doc
+'''

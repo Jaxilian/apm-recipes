@@ -41,5 +41,12 @@ gh release view "$TAG" >/dev/null 2>&1 || \
 for old in $(gh release view "$TAG" --json assets -q '.assets[].name' | grep '^index-.*\.zip$'); do
 	[ -f "index/$old" ] || gh release delete-asset "$TAG" "$old" -y
 done
-gh release upload "$TAG" --clobber index/*
+# The upload fails transiently now and then; the second attempt has always
+# gone through. --clobber makes a retry safe.
+n=0
+until gh release upload "$TAG" --clobber index/*; do
+	n=$((n + 1)); [ $n -lt 3 ] || exit 1
+	echo "upload failed, retrying ($n)" >&2; sleep 5
+done
 echo "published: https://github.com/Jaxilian/apm-recipes/releases/download/$TAG/stamp.toml"
+echo "note: the edge cache serves the previous stamp.toml for a few minutes" >&2
