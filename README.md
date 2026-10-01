@@ -11,8 +11,8 @@ stable and costs nothing to serve.
 sudo apm repo add main https://github.com/Jaxilian/apm-recipes/releases/download/index
 sudo apm key trust "$(curl -sL https://raw.githubusercontent.com/Jaxilian/apm-recipes/main/keys/apm.pub | sed -n 2p)"
 sudo apm update
-apm find hello
-sudo apm install hello-c
+apm find images
+sudo apm install images
 ```
 
 `key trust` takes a file path or the key's base64 (the second line of a
