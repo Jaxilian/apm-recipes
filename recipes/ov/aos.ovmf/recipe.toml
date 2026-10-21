@@ -1,0 +1,46 @@
+# OVMF, the UEFI firmware QEMU boots a virtual machine with: Debian's
+# build of EDK II (the ovmf-generic package), unpacked, nothing compiled.
+# For building and testing AOS on AOS (docs/building.md "Building AOS on
+# AOS"): the QEMU drivers under board/aos look for the firmware here when
+# the host has no edk2-ovmf of its own.
+#
+# Debian ships the 4 MB images (OVMF_CODE_4M.fd + OVMF_VARS_4M.fd, the
+# pair QEMU's -drive if=pflash takes), the Secure Boot build
+# (OVMF_CODE_4M.secboot.fd) and a variable store with Microsoft's keys
+# enrolled (OVMF_VARS_4M.ms.fd), which is what secureboot-test.py wants.
+# They are installed under Fedora's names too, since that is what the
+# drivers were written against: share/edk2/ovmf/OVMF_CODE.fd,
+# OVMF_VARS.fd, OVMF_CODE.secboot.fd, OVMF_VARS.secboot.fd.
+#
+# The version is Debian's 2026.08 (edk2-stable202608) written as 2026.8.0.
+# BSD-2-Clause-Patent, as EDK II is.
+
+recipe_version = 1
+
+[package]
+name         = "ovmf"
+organization = "aos"
+version      = "2026.8.0"
+release      = 1
+kind         = "bin"
+summary      = "OVMF: the UEFI firmware for QEMU virtual machines (EDK II, Debian's build)"
+license      = "BSD-2-Clause-Patent"
+homepage     = "https://github.com/tianocore/edk2"
+
+[[source]]
+url    = "https://deb.debian.org/debian/pool/main/e/edk2/ovmf-generic_2026.08%2Bds-2_all.deb"
+sha256 = "05c1593998ba58700ff86c062bde306321af1f5a2943ea9ceef6c2332f3f3374"
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/share/OVMF $D/share/edk2/ovmf $D/share/qemu/firmware $D/share/doc/ovmf
+cp -a $APM_SRC/usr/share/OVMF/. $D/share/OVMF/
+cp -a $APM_SRC/usr/share/qemu/firmware/. $D/share/qemu/firmware/
+cp $APM_SRC/usr/share/doc/ovmf-generic/copyright $D/share/doc/ovmf/
+# Fedora's names, which board/aos/boot-test.py and run-qemu.sh use.
+cp $D/share/OVMF/OVMF_CODE_4M.fd $D/share/edk2/ovmf/OVMF_CODE.fd
+cp $D/share/OVMF/OVMF_VARS_4M.fd $D/share/edk2/ovmf/OVMF_VARS.fd
+cp $D/share/OVMF/OVMF_CODE_4M.secboot.fd $D/share/edk2/ovmf/OVMF_CODE.secboot.fd
+cp $D/share/OVMF/OVMF_VARS_4M.ms.fd $D/share/edk2/ovmf/OVMF_VARS.secboot.fd
+'''
