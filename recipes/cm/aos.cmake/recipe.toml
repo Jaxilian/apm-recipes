@@ -5,7 +5,8 @@
 # unmodified. Nothing to compile -- the install copies.
 #
 # cmake finds its modules at ../share/cmake-<maj.min> relative to its own
-# binary, so share/cmake-4.4 goes in whole. cmake-gui is left out: it
+# binary, so share/cmake-<maj.min> goes in whole (globbed, so a bump
+# to the next minor needs no edit here). cmake-gui is left out: it
 # needs Qt, which nothing here ships. The docs, man pages and editor
 # files are left out too.
 
@@ -36,6 +37,6 @@ install -d $D/bin $D/share/bash-completion
 for b in cmake ctest cpack ccmake; do
 	install -m 755 bin/$b $D/bin/
 done
-cp -a share/cmake-4.4 $D/share/
+cp -a share/cmake-[0-9]* $D/share/
 cp -a share/bash-completion/. $D/share/bash-completion/
 '''

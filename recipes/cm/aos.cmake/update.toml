@@ -1,0 +1,9 @@
+# Kitware's prebuilt tarball, 4.x only: a 5.0 may drop policies projects
+# rely on, so it is taken by hand. -rc tags are prereleases and do not
+# match the tag regex anyway.
+[[source]]
+kind  = "github"
+repo  = "Kitware/CMake"
+tag   = '^v(4\.\d+\.\d+)$'
+track = "4"
+asset = '^cmake-4\.\d+\.\d+-linux-x86_64\.tar\.gz$'

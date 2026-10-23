@@ -1,0 +1,8 @@
+# The generic "linux" asset (glibc 2.34); the -glibc-2.xx builds beside it
+# want a newer glibc than some machines have. Betas are tagged
+# v5.0.0-betaN and not always marked prerelease, hence the strict tag regex.
+[[source]]
+kind  = "github"
+repo  = "premake/premake-core"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^premake-\d+\.\d+\.\d+-linux\.tar\.gz$'

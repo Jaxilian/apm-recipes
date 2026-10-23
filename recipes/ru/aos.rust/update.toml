@@ -1,0 +1,11 @@
+# Rust stable, 1.x, from rust-lang/rust's releases (the tag is the bare
+# version). The file is upstream's own tarball on static.rust-lang.org,
+# not a GitHub asset; its .sha256 beside it is what the download is checked
+# against.
+[[source]]
+kind  = "github"
+repo  = "rust-lang/rust"
+tag   = '^(1\.\d+\.\d+)$'
+track = "1"
+url   = "https://static.rust-lang.org/dist/rust-{version}-x86_64-unknown-linux-gnu.tar.xz"
+sums  = "{url}.sha256"
