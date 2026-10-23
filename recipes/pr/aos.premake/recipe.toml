@@ -1,0 +1,27 @@
+# premake5, the Lua-scripted build configuration tool, from upstream's
+# prebuilt Linux binary: one file, nothing to compile. The generic
+# "linux" build needs glibc 2.34 and libuuid, both in the core.
+
+recipe_version = 1
+
+[package]
+name         = "premake"
+organization = "aos"
+version      = "5.0.0"
+release      = 1
+kind         = "bin"
+summary      = "premake5: generate makefiles and IDE projects from a Lua script"
+license      = "BSD-3-Clause"
+homepage     = "https://premake.github.io/"
+
+[[source]]
+url    = "https://github.com/premake/premake-core/releases/download/v5.0.0/premake-5.0.0-linux.tar.gz"
+sha256 = "8e50e143402de3ce0f0fefe4bb3f4f6a7db46c7d66203dc9f134c0348ebfe6c5"
+
+[provides]
+command = ["premake5"]
+
+[build]
+install = '''
+install -Dm 755 premake5 $APM_DESTDIR$APM_PREFIX/bin/premake5
+'''

@@ -1,0 +1,41 @@
+# CMake, the build system generator, with ctest, cpack and ccmake (the
+# terminal front end), from Kitware's prebuilt Linux tarball. Those
+# binaries are linked against glibc 2.17 with everything else static
+# (ncurses included, for ccmake), so they run on the glibc 2.44 target
+# unmodified. Nothing to compile -- the install copies.
+#
+# cmake finds its modules at ../share/cmake-<maj.min> relative to its own
+# binary, so share/cmake-4.4 goes in whole. cmake-gui is left out: it
+# needs Qt, which nothing here ships. The docs, man pages and editor
+# files are left out too.
+
+recipe_version = 1
+
+[package]
+name         = "cmake"
+organization = "aos"
+version      = "4.4.4"
+release      = 1
+kind         = "bin"
+summary      = "CMake: the cross-platform build system generator, with ctest and cpack"
+license      = "BSD-3-Clause"
+homepage     = "https://cmake.org/"
+
+[[source]]
+url    = "https://github.com/Kitware/CMake/releases/download/v4.4.4/cmake-4.4.4-linux-x86_64.tar.gz"
+sha256 = "e5bb807f7728cb60cd8b27ebc97a2edb469b68655f21e844a600c3575b76f5bb"
+strip  = 1
+
+[provides]
+command = ["cmake", "ctest", "cpack", "ccmake"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin $D/share/bash-completion
+for b in cmake ctest cpack ccmake; do
+	install -m 755 bin/$b $D/bin/
+done
+cp -a share/cmake-4.4 $D/share/
+cp -a share/bash-completion/. $D/share/bash-completion/
+'''
