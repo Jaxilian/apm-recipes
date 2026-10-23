@@ -19,7 +19,7 @@ recipe_version = 1
 name         = "rust"
 organization = "aos"
 version      = "1.99.1"
-release      = 1
+release      = 2
 kind         = "bin"
 summary      = "the Rust toolchain: rustc, cargo, rustfmt, clippy"
 license      = "MIT OR Apache-2.0"
@@ -53,3 +53,10 @@ rm -rf $APM_DESTDIR$APM_PREFIX/lib/rustlib/uninstall.sh \
 rm -f $APM_DESTDIR$APM_PREFIX/lib/rustlib/manifest-*
 rm -rf $APM_DESTDIR$APM_PREFIX/share/doc
 '''
+
+# rustc links with cc: gcc and the crt objects and libc's static parts
+# are Software's aos/devel since AOS 0.4.10 (the core links to them).
+[[dependencies]]
+name         = "devel"
+organization = "aos"
+track        = "*"
