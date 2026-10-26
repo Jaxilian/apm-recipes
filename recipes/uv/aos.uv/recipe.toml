@@ -1,0 +1,39 @@
+# uv, Astral's Python package and project manager, from its own release:
+# the x86_64 glibc tarball with uv and uvx, static Rust binaries that
+# need nothing of the runtime. It downloads Python itself (into
+# ~/.local/share/uv) and every wheel a project's uv.lock pins, so a
+# project on AOS needs no system Python package at all.
+#
+# Pinned at 0.12.24 and not followed by the bumper: the user's projects
+# require uv below 0.13 (requirements.md, 2026-10-26); move it by hand.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the .sha256 file beside the asset, checked against the download on
+# 2026-10-26. Apache-2.0 OR MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "uv"
+organization = "aos"
+version      = "0.12.24"
+release      = 1
+kind         = "bin"
+summary      = "uv: Python projects, environments and packages, with the Python they pin"
+license      = "Apache-2.0 OR MIT"
+homepage     = "https://docs.astral.sh/uv/"
+
+[[source]]
+url    = "https://github.com/astral-sh/uv/releases/download/0.12.24/uv-x86_64-unknown-linux-gnu.tar.gz"
+sha256 = "b4dfaef47d491a7296981f8374a4595f55dbf84e8937c8ecd2983574d8bb3da6"
+strip  = 1
+
+[provides]
+command = ["uv", "uvx"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/uv $APM_SRC/uvx $D/bin/
+'''
