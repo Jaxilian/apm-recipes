@@ -66,6 +66,15 @@ for f in index/*.apkg; do
 	echo "superseded: $f"; rm -f "$f"
 done
 
+# aos/devel is one build per OS release (its headers match that core and
+# no other, min_aos = version), so every older version is dead weight:
+# Software listed fifteen of them, each "installed" (2026-11-01). The two
+# newest stay, the one a machine on the previous release still needs
+# and the current one; apm's find and Software show one row anyway.
+for old in $(ls index/aos-devel-*.apkg 2>/dev/null | sort -V | head -n -2); do
+	echo "old devel: $old"; rm -f "$old" "$old.minisig"
+done
+
 "$APM" index index --sign
 [ "$1" = --local ] && exit 0
 
