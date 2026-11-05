@@ -1,0 +1,44 @@
+# bat, cat with syntax highlighting and git marks, from its own release:
+# the x86_64 musl tarball, one static Rust binary that needs nothing of
+# the runtime. bat keeps its syntax cache under ~/.cache/bat and its
+# config under ~/.config/bat, so bin/bat is a wrapper that points both
+# (BAT_CACHE_PATH, BAT_CONFIG_DIR) at ~/AppData/aos.bat and runs
+# libexec/bat.
+#
+# No sandbox, like the other developer tools. sharkdp/bat publishes no
+# checksum file; the sha256 is of the download, taken on 2026-11-05.
+# Apache-2.0 OR MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "bat"
+organization = "aos"
+version      = "0.26.1"
+release      = 1
+kind         = "bin"
+summary      = "bat: shows a file with syntax highlighting, line numbers and git changes"
+license      = "Apache-2.0 OR MIT"
+homepage     = "https://github.com/sharkdp/bat"
+
+[[source]]
+url    = "https://github.com/sharkdp/bat/releases/download/v0.26.1/bat-v0.26.1-x86_64-unknown-linux-musl.tar.gz"
+sha256 = "0dcd8ac79732c0d5b136f11f4ee00e581440e16a44eab5b3105b611bbf2cf191"
+strip  = 1
+
+[provides]
+command = ["bat"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin $D/libexec
+install -m 755 $APM_SRC/bat $D/libexec/bat
+cat > $D/bin/bat <<'SH'
+#!/bin/sh
+export BAT_CACHE_PATH=$HOME/AppData/aos.bat/cache BAT_CONFIG_DIR=$HOME/AppData/aos.bat/config
+mkdir -p "$BAT_CACHE_PATH" "$BAT_CONFIG_DIR"
+exec "$(dirname "$(readlink -f "$0")")/../libexec/bat" "$@"
+SH
+chmod 755 $D/bin/bat
+'''

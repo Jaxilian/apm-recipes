@@ -1,0 +1,36 @@
+# xh, a friendly HTTP client in the shape of HTTPie, from its own release:
+# the x86_64 musl tarball, one static Rust binary that needs nothing of
+# the runtime. xhs (HTTPS by default) is a link to xh upstream and stays
+# a link here.
+#
+# No sandbox, like the other developer tools. ducaale/xh publishes no
+# checksum file; the sha256 is of the download, taken on 2026-11-05.
+# MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "xh"
+organization = "aos"
+version      = "0.26.3"
+release      = 1
+kind         = "bin"
+summary      = "xh: HTTP requests from the terminal, HTTPie syntax, coloured output"
+license      = "MIT"
+homepage     = "https://github.com/ducaale/xh"
+
+[[source]]
+url    = "https://github.com/ducaale/xh/releases/download/v0.26.3/xh-v0.26.3-x86_64-unknown-linux-musl.tar.gz"
+sha256 = "cbbf53bd76007d57d95e4bed8ba7fb3b7fcec22af4bdfc1ff119cd5de351e74f"
+strip  = 1
+
+[provides]
+command = ["xh", "xhs"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/xh $D/bin/
+ln -s xh $D/bin/xhs
+'''

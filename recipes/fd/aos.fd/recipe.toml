@@ -1,0 +1,34 @@
+# fd, a simple and fast alternative to find, from its own release: the
+# x86_64 musl tarball, one static Rust binary that needs nothing of the
+# runtime.
+#
+# No sandbox, like the other developer tools. sharkdp/fd publishes no
+# checksum file; the sha256 is of the download, taken on 2026-11-05.
+# Apache-2.0 OR MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "fd"
+organization = "aos"
+version      = "10.5.1"
+release      = 1
+kind         = "bin"
+summary      = "fd: finds files by name, fast, skipping what .gitignore skips"
+license      = "Apache-2.0 OR MIT"
+homepage     = "https://github.com/sharkdp/fd"
+
+[[source]]
+url    = "https://github.com/sharkdp/fd/releases/download/v10.5.1/fd-v10.5.1-x86_64-unknown-linux-musl.tar.gz"
+sha256 = "f6c95edb190c241df6fddc815a5bab4051444993ac5d92ddc6eec0e0dc2342c7"
+strip  = 1
+
+[provides]
+command = ["fd"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/fd $D/bin/
+'''

@@ -1,0 +1,60 @@
+# The Go toolchain from go.dev's own release tarball: go, gofmt, the
+# standard library and the compiler, static binaries that need nothing of
+# the runtime. The whole tree stays under libexec/go, since go derives
+# GOROOT from where its binary is and the tree must be intact. bin/go is a
+# wrapper that puts the per-person state (GOPATH, the module cache, the
+# build cache, go.env) in ~/AppData/aos.go, where this OS keeps a program's
+# data, and pins GOTOOLCHAIN=local so a go.mod cannot make it download
+# another toolchain into the home. HOME stays as it is: go reads
+# ~/.gitconfig and ~/.ssh for private modules. cgo links with gcc.
+#
+# No sandbox, like the other developer tools. The sha256 is the one
+# go.dev/dl/?mode=json publishes for the file, checked against the
+# download on 2026-11-05. BSD-3-Clause. Fetched from go.dev, never
+# mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "go"
+organization = "aos"
+version      = "1.27.3"
+release      = 1
+kind         = "bin"
+summary      = "the Go toolchain: go and gofmt, with modules and caches in AppData"
+license      = "BSD-3-Clause"
+homepage     = "https://go.dev/"
+
+[[source]]
+url    = "https://go.dev/dl/go1.27.3.linux-amd64.tar.gz"
+sha256 = "65efbc80fdc1fa2cd2631cad5b481777a68e8725f34e89f50fc6ac714e379b40"
+strip  = 1
+
+[requires]
+run = ["gcc"]
+
+[provides]
+command = ["go", "gofmt"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/libexec/go $D/bin
+cp -a $APM_SRC/. $D/libexec/go/
+rm -rf $D/libexec/go/test $D/libexec/go/doc
+cat > $D/bin/go <<'WRAP'
+#!/bin/sh
+export GOPATH=$HOME/AppData/aos.go/path GOMODCACHE=$HOME/AppData/aos.go/mod GOCACHE=$HOME/AppData/aos.go/cache GOENV=$HOME/AppData/aos.go/env GOTOOLCHAIN=local
+mkdir -p "$GOPATH" "$GOMODCACHE" "$GOCACHE"
+exec "$(dirname "$(readlink -f "$0")")/../libexec/go/bin/go" "$@"
+WRAP
+chmod 755 $D/bin/go
+ln -s ../libexec/go/bin/gofmt $D/bin/gofmt
+'''
+
+# cgo links with cc: gcc and the crt objects and libc's static parts
+# are Software's aos/devel since AOS 0.4.10 (the core links to them).
+[[dependencies]]
+name         = "devel"
+organization = "aos"
+track        = "*"

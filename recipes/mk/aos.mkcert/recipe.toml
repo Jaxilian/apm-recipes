@@ -1,0 +1,43 @@
+# mkcert, locally trusted development certificates, from its own release:
+# mkcert-v1.4.4-linux-amd64 is the one static binary, no archive.
+# bin/mkcert is a wrapper that puts the local CA (CAROOT) in
+# ~/AppData/aos.mkcert, where this OS keeps a program's data, instead of
+# ~/.local/share/mkcert. `mkcert -install` adds that CA to the person's
+# browser and system stores.
+#
+# No sandbox, like the other developer tools. The release publishes no
+# checksum file; the sha256 is of the asset as downloaded on 2026-11-05.
+# BSD-3-Clause. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "mkcert"
+organization = "aos"
+version      = "1.4.4"
+release      = 1
+kind         = "bin"
+summary      = "mkcert: locally trusted HTTPS certificates for development"
+license      = "BSD-3-Clause"
+homepage     = "https://github.com/FiloSottile/mkcert"
+
+[[source]]
+url    = "https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64"
+sha256 = "6d31c65b03972c6dc4a14ab429f2928300518b26503f58723e532d1b0a3bbb52"
+
+[provides]
+command = ["mkcert"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/libexec $D/bin
+install -m 755 $APM_SRC/mkcert-v1.4.4-linux-amd64 $D/libexec/mkcert
+cat > $D/bin/mkcert <<'WRAP'
+#!/bin/sh
+export CAROOT=$HOME/AppData/aos.mkcert
+mkdir -p "$CAROOT"
+exec "$(dirname "$(readlink -f "$0")")/../libexec/mkcert" "$@"
+WRAP
+chmod 755 $D/bin/mkcert
+'''

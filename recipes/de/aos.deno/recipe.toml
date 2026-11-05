@@ -1,0 +1,44 @@
+# Deno, the JavaScript and TypeScript runtime, from its own release:
+# deno-x86_64-unknown-linux-gnu.zip holds the one binary. bin/deno is a
+# wrapper that puts the cache of remote modules and npm packages
+# (DENO_DIR) in ~/AppData/aos.deno, where this OS keeps a program's data.
+# HOME stays as it is: deno reads ~/.gitconfig and ~/.ssh for private
+# modules.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the .sha256sum file beside the asset, checked against the download on
+# 2026-11-05. MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "deno"
+organization = "aos"
+version      = "2.9.8"
+release      = 1
+kind         = "bin"
+summary      = "Deno: the JavaScript and TypeScript runtime with built-in tooling"
+license      = "MIT"
+homepage     = "https://deno.com/"
+# A zip source: apm unpacks one since v0.1.35, which AOS 0.4.24 ships.
+min_aos      = "0.4.24"
+
+[[source]]
+url    = "https://github.com/denoland/deno/releases/download/v2.9.8/deno-x86_64-unknown-linux-gnu.zip"
+sha256 = "e890975bc2549807bbcc0b584ffafda72cc7c93349dd99c80483dd784f6c4609"
+
+[provides]
+command = ["deno"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/libexec $D/bin
+install -m 755 $APM_SRC/deno $D/libexec/deno
+cat > $D/bin/deno <<'WRAP'
+#!/bin/sh
+export DENO_DIR=$HOME/AppData/aos.deno
+exec "$(dirname "$(readlink -f "$0")")/../libexec/deno" "$@"
+WRAP
+chmod 755 $D/bin/deno
+'''

@@ -1,0 +1,34 @@
+# ShellCheck, a static analyser for shell scripts, from its own release:
+# the linux.x86_64 tarball, one static Haskell binary that needs nothing
+# of the runtime.
+#
+# No sandbox, like the other developer tools. koalaman/shellcheck
+# publishes no checksum file; the sha256 is of the download, taken on
+# 2026-11-05. GPL-3.0-or-later. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "shellcheck"
+organization = "aos"
+version      = "0.11.0"
+release      = 1
+kind         = "bin"
+summary      = "ShellCheck: finds bugs and pitfalls in sh and bash scripts"
+license      = "GPL-3.0-or-later"
+homepage     = "https://www.shellcheck.net/"
+
+[[source]]
+url    = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz"
+sha256 = "8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
+strip  = 1
+
+[provides]
+command = ["shellcheck"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/shellcheck $D/bin/
+'''

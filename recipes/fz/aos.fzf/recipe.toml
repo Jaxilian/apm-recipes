@@ -1,0 +1,33 @@
+# fzf, the command-line fuzzy finder, from its own release: the
+# linux_amd64 tarball, one static Go binary that needs nothing of the
+# runtime.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the release's fzf_0.74.5_checksums.txt, checked against the download
+# on 2026-11-05. MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "fzf"
+organization = "aos"
+version      = "0.74.5"
+release      = 1
+kind         = "bin"
+summary      = "fzf: picks a line from any list by typing a few letters of it"
+license      = "MIT"
+homepage     = "https://junegunn.github.io/fzf/"
+
+[[source]]
+url    = "https://github.com/junegunn/fzf/releases/download/v0.74.5/fzf-0.74.5-linux_amd64.tar.gz"
+sha256 = "d47d7f882972c7d674dbbba998ffa4116e68379616ffac7695d0671e9a722c5f"
+
+[provides]
+command = ["fzf"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/fzf $D/bin/
+'''

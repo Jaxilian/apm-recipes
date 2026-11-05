@@ -1,0 +1,42 @@
+# direnv, per-folder environment variables from an .envrc, from its own
+# release: the bare linux-amd64 binary, static Go that needs nothing of
+# the runtime. direnv keeps its allow-list under $XDG_DATA_HOME and its
+# config under $XDG_CONFIG_HOME, so bin/direnv is a wrapper that points
+# both at ~/AppData/aos.direnv and runs libexec/direnv.
+#
+# No sandbox, like the other developer tools. direnv/direnv publishes no
+# checksum file; the sha256 is of the download, taken on 2026-11-05.
+# MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "direnv"
+organization = "aos"
+version      = "2.38.2"
+release      = 1
+kind         = "bin"
+summary      = "direnv: loads and unloads environment variables as you enter and leave a folder"
+license      = "MIT"
+homepage     = "https://direnv.net/"
+
+[[source]]
+url    = "https://github.com/direnv/direnv/releases/download/v2.38.2/direnv.linux-amd64"
+sha256 = "148820a187930d36ca6a204504e5cdb30d8396cd1a97e64c3b3f10d793c11247"
+
+[provides]
+command = ["direnv"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin $D/libexec
+install -m 755 $APM_SRC/direnv.linux-amd64 $D/libexec/direnv
+cat > $D/bin/direnv <<'SH'
+#!/bin/sh
+export XDG_DATA_HOME=$HOME/AppData/aos.direnv XDG_CONFIG_HOME=$HOME/AppData/aos.direnv
+mkdir -p "$XDG_DATA_HOME"
+exec "$(dirname "$(readlink -f "$0")")/../libexec/direnv" "$@"
+SH
+chmod 755 $D/bin/direnv
+'''

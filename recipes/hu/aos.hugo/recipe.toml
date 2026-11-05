@@ -1,0 +1,41 @@
+# Hugo, the static site generator, from its own release: the extended
+# build (Sass/SCSS and WebP built in) as one binary. bin/hugo is a wrapper
+# that puts the module and resource cache (HUGO_CACHEDIR) in
+# ~/AppData/aos.hugo, where this OS keeps a program's data, instead of
+# the system's temporary directory.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the release's checksums.txt, checked against the download on
+# 2026-11-05. Apache-2.0. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "hugo"
+organization = "aos"
+version      = "0.169.0"
+release      = 1
+kind         = "bin"
+summary      = "Hugo: the fast static site generator, extended build with Sass and WebP"
+license      = "Apache-2.0"
+homepage     = "https://gohugo.io/"
+
+[[source]]
+url    = "https://github.com/gohugoio/hugo/releases/download/v0.169.0/hugo_extended_0.169.0_linux-amd64.tar.gz"
+sha256 = "c41672a0725d307758a132bc94a962e59760eb33f9ba08c991b81f9881d6fa7d"
+
+[provides]
+command = ["hugo"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/libexec $D/bin
+install -m 755 $APM_SRC/hugo $D/libexec/hugo
+cat > $D/bin/hugo <<'WRAP'
+#!/bin/sh
+export HUGO_CACHEDIR=$HOME/AppData/aos.hugo/cache
+exec "$(dirname "$(readlink -f "$0")")/../libexec/hugo" "$@"
+WRAP
+chmod 755 $D/bin/hugo
+'''

@@ -1,0 +1,33 @@
+# websocat, a command-line WebSocket client and server, from its own
+# release: the bare x86_64 musl binary, static Rust that needs nothing
+# of the runtime.
+#
+# No sandbox, like the other developer tools. vi/websocat publishes no
+# checksum file; the sha256 is of the download, taken on 2026-11-05.
+# MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "websocat"
+organization = "aos"
+version      = "1.14.1"
+release      = 1
+kind         = "bin"
+summary      = "websocat: talks to WebSocket servers from the terminal, or serves one"
+license      = "MIT"
+homepage     = "https://github.com/vi/websocat"
+
+[[source]]
+url    = "https://github.com/vi/websocat/releases/download/v1.14.1/websocat.x86_64-unknown-linux-musl"
+sha256 = "66f8dd3a0394761556339117f8bb5123bddefd44e087af2a72ec22b0bd08d514"
+
+[provides]
+command = ["websocat"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/websocat.x86_64-unknown-linux-musl $D/bin/websocat
+'''

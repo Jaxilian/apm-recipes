@@ -1,0 +1,34 @@
+# ripgrep, a fast recursive grep that respects .gitignore, from its own
+# release: the x86_64 musl tarball, one static Rust binary that needs
+# nothing of the runtime.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the .sha256 file beside the asset, checked against the download on
+# 2026-11-05. MIT OR Unlicense. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "ripgrep"
+organization = "aos"
+version      = "15.2.0"
+release      = 1
+kind         = "bin"
+summary      = "ripgrep: searches folders for a pattern, fast, skipping what .gitignore skips"
+license      = "MIT OR Unlicense"
+homepage     = "https://github.com/BurntSushi/ripgrep"
+
+[[source]]
+url    = "https://github.com/BurntSushi/ripgrep/releases/download/15.2.0/ripgrep-15.2.0-x86_64-unknown-linux-musl.tar.gz"
+sha256 = "33e15bcf1624b25cdd2a55813a47a2f95dbe126268203e76aa6a585d1e7b149c"
+strip  = 1
+
+[provides]
+command = ["rg"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/rg $D/bin/
+'''

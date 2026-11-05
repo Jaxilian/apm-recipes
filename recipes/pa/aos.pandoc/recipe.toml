@@ -1,0 +1,37 @@
+# pandoc, the universal document converter, from its own release: the
+# linux-amd64 tarball, a static Haskell binary that needs nothing of the
+# runtime. pandoc-lua and pandoc-server are links to the same binary
+# upstream and stay links here.
+#
+# No sandbox, like the other developer tools. jgm/pandoc publishes no
+# checksum file; the sha256 is of the download, taken on 2026-11-05.
+# GPL-2.0-or-later. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "pandoc"
+organization = "aos"
+version      = "3.13.0"
+release      = 1
+kind         = "bin"
+summary      = "pandoc: converts documents between Markdown, HTML, LaTeX, DOCX, EPUB and more"
+license      = "GPL-2.0-or-later"
+homepage     = "https://pandoc.org/"
+
+[[source]]
+url    = "https://github.com/jgm/pandoc/releases/download/3.13/pandoc-3.13-linux-amd64.tar.gz"
+sha256 = "38aa33b325a2bc96a4c39409631212db55702f564250bcdbead180b3bf646389"
+strip  = 1
+
+[provides]
+command = ["pandoc", "pandoc-lua", "pandoc-server"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/bin/pandoc $D/bin/
+ln -s pandoc $D/bin/pandoc-lua
+ln -s pandoc $D/bin/pandoc-server
+'''

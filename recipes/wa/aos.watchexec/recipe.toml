@@ -1,0 +1,34 @@
+# watchexec, runs a command when files change, from its own release: the
+# x86_64 musl tarball, one static Rust binary that needs nothing of the
+# runtime.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the .sha256 file beside the asset, checked against the download on
+# 2026-11-05. Apache-2.0. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "watchexec"
+organization = "aos"
+version      = "2.8.0"
+release      = 1
+kind         = "bin"
+summary      = "watchexec: runs a command again whenever files in a folder change"
+license      = "Apache-2.0"
+homepage     = "https://watchexec.github.io/"
+
+[[source]]
+url    = "https://github.com/watchexec/watchexec/releases/download/v2.8.0/watchexec-2.8.0-x86_64-unknown-linux-musl.tar.xz"
+sha256 = "35ea667cbe4bc96c23ba2a1f46c94c46bc385b67165e3bf621c0e7e4959aa99b"
+strip  = 1
+
+[provides]
+command = ["watchexec"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/watchexec $D/bin/
+'''

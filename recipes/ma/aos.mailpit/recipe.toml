@@ -1,0 +1,42 @@
+# Mailpit, a local SMTP sink with a web inbox, from its own release
+# tarball: the one static binary. It takes mail on port 1025 and shows
+# it at http://localhost:8025. bin/mailpit is a wrapper that puts its
+# database (MP_DATABASE) in ~/AppData/aos.mailpit, where this OS keeps a
+# program's data; without it Mailpit keeps mail in memory only.
+#
+# No sandbox, like the other developer tools. The release publishes no
+# checksum file; the sha256 is of the asset as downloaded on 2026-11-05.
+# MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "mailpit"
+organization = "aos"
+version      = "1.33.0"
+release      = 1
+kind         = "bin"
+summary      = "Mailpit: a local SMTP sink on port 1025 with a web inbox on 8025"
+license      = "MIT"
+homepage     = "https://mailpit.axllent.org/"
+
+[[source]]
+url    = "https://github.com/axllent/mailpit/releases/download/v1.33.0/mailpit-linux-amd64.tar.gz"
+sha256 = "d0ec50080cbf3e7c1fa2cda2ee68125d7894175811084b1f8f47c6cfc6f487c8"
+
+[provides]
+command = ["mailpit"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/libexec $D/bin
+install -m 755 $APM_SRC/mailpit $D/libexec/mailpit
+cat > $D/bin/mailpit <<'WRAP'
+#!/bin/sh
+export MP_DATABASE=$HOME/AppData/aos.mailpit/mailpit.db
+mkdir -p "$HOME/AppData/aos.mailpit"
+exec "$(dirname "$(readlink -f "$0")")/../libexec/mailpit" "$@"
+WRAP
+chmod 755 $D/bin/mailpit
+'''

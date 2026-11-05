@@ -1,0 +1,45 @@
+# OpenTofu, the infrastructure-as-code tool (the open fork of Terraform),
+# from its own release: tofu_X_linux_amd64.zip holds the one binary.
+# bin/tofu is a wrapper that puts the provider plugin cache
+# (TF_PLUGIN_CACHE_DIR) and the CLI configuration (TF_CLI_CONFIG_FILE) in
+# ~/AppData/aos.opentofu, where this OS keeps a program's data, instead
+# of ~/.terraform.d and ~/.tofurc. A missing tofurc is fine: tofu skips it.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the release's SHA256SUMS, checked against the download on 2026-11-05.
+# MPL-2.0. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "opentofu"
+organization = "aos"
+version      = "1.13.8"
+release      = 1
+kind         = "bin"
+summary      = "OpenTofu: infrastructure as code, the open Terraform"
+license      = "MPL-2.0"
+homepage     = "https://opentofu.org/"
+# A zip source: apm unpacks one since v0.1.35, which AOS 0.4.24 ships.
+min_aos      = "0.4.24"
+
+[[source]]
+url    = "https://github.com/opentofu/opentofu/releases/download/v1.13.8/tofu_1.13.8_linux_amd64.zip"
+sha256 = "aa4382a5eefcf026309d07398ea803f97b9218a17d940999a938be22bfe9d73f"
+
+[provides]
+command = ["tofu"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/libexec $D/bin
+install -m 755 $APM_SRC/tofu $D/libexec/tofu
+cat > $D/bin/tofu <<'WRAP'
+#!/bin/sh
+export TF_PLUGIN_CACHE_DIR=$HOME/AppData/aos.opentofu/plugins TF_CLI_CONFIG_FILE=$HOME/AppData/aos.opentofu/tofurc
+mkdir -p "$TF_PLUGIN_CACHE_DIR"
+exec "$(dirname "$(readlink -f "$0")")/../libexec/tofu" "$@"
+WRAP
+chmod 755 $D/bin/tofu
+'''

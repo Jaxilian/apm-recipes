@@ -1,0 +1,33 @@
+# just, a command runner with a justfile, from its own release: the
+# x86_64 musl tarball, one static Rust binary that needs nothing of the
+# runtime.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the release's SHA256SUMS, checked against the download on 2026-11-05.
+# CC0-1.0. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "just"
+organization = "aos"
+version      = "1.59.0"
+release      = 1
+kind         = "bin"
+summary      = "just: saves and runs a project's commands from a justfile"
+license      = "CC0-1.0"
+homepage     = "https://just.systems/"
+
+[[source]]
+url    = "https://github.com/casey/just/releases/download/1.59.0/just-1.59.0-x86_64-unknown-linux-musl.tar.gz"
+sha256 = "409044617b6f06517c1035e55ca38c8c856ff8b650e41bc2aa1ef82d5903a23e"
+
+[provides]
+command = ["just"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/just $D/bin/
+'''

@@ -1,0 +1,33 @@
+# Zola, the static site generator in one binary, from its own release
+# tarball for x86_64 glibc. It keeps no per-person data (everything is in
+# the site's directory), so the binary is installed as it is.
+#
+# No sandbox, like the other developer tools. The release publishes no
+# checksum file; the sha256 is of the asset as downloaded on 2026-11-05.
+# MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "zola"
+organization = "aos"
+version      = "0.23.6"
+release      = 1
+kind         = "bin"
+summary      = "Zola: a fast static site generator in a single binary"
+license      = "MIT"
+homepage     = "https://www.getzola.org/"
+
+[[source]]
+url    = "https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-gnu.tar.gz"
+sha256 = "8f5132b3522412d04e395e0b25f6d68613ad272a873e54a2b3ebf664873024a4"
+
+[provides]
+command = ["zola"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin
+install -m 755 $APM_SRC/zola $D/bin/zola
+'''

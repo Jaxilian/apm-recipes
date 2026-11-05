@@ -1,0 +1,49 @@
+# Bun, the JavaScript runtime, bundler and package manager, from its own
+# release: bun-linux-x64.zip holds the one binary (the AVX2 build; the
+# baseline build is for CPUs without it). bunx is bun called under that
+# name, so libexec holds bun and a bunx link to it, and bin has a wrapper
+# for each that puts the global installs and the cache (BUN_INSTALL) in
+# ~/AppData/aos.bun, where this OS keeps a program's data. HOME stays as
+# it is: bun reads ~/.gitconfig and ~/.ssh for private packages.
+#
+# No sandbox, like the other developer tools. The sha256 is the one in
+# the release's SHASUMS256.txt, checked against the download on
+# 2026-11-05. MIT. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "bun"
+organization = "aos"
+version      = "1.4.4"
+release      = 1
+kind         = "bin"
+summary      = "Bun: the fast JavaScript runtime, bundler and package manager"
+license      = "MIT"
+homepage     = "https://bun.sh/"
+# A zip source: apm unpacks one since v0.1.35, which AOS 0.4.24 ships.
+min_aos      = "0.4.24"
+
+[[source]]
+url    = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.4/bun-linux-x64.zip"
+sha256 = "bf8ccbfb2b0b80159e0f9a6d15c55317add8077534dbc6130a3edb52fccb395c"
+strip  = 1
+
+[provides]
+command = ["bun", "bunx"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/libexec $D/bin
+install -m 755 $APM_SRC/bun $D/libexec/bun
+ln -s bun $D/libexec/bunx
+for c in bun bunx; do
+cat > $D/bin/$c <<'WRAP'
+#!/bin/sh
+export BUN_INSTALL=$HOME/AppData/aos.bun
+exec "$(dirname "$(readlink -f "$0")")/../libexec/$(basename "$0")" "$@"
+WRAP
+chmod 755 $D/bin/$c
+done
+'''
