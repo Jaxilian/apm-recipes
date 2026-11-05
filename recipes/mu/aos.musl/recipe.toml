@@ -1,0 +1,59 @@
+# musl libc and its musl-gcc wrapper, for building small static programs:
+# `musl-gcc -static -O2 hello.c -o hello` gives a binary that runs on any
+# Linux. Built on the machine with the gcc and make of aos/devel.
+#
+# The source is musl 1.2.6 (https://musl.libc.org/releases/musl-1.2.6.tar.gz,
+# sha256 d585fd3b613c66151fc3249e8ed44f77020cb5e6c1e635a616d3f9f82460512a,
+# downloaded 2026-11-05; its signature was not checked, the signing key
+# could not be fetched) with the three patches of musl's security advisory
+# applied, since every release through 1.2.6 is affected and 1.2.7 is not
+# out: CVE-2026-107891 regcomp integer overflows
+# (https://www.openwall.com/lists/musl/2026/10/21/1/1), CVE-2026-40200
+# qsort (32-bit only; https://www.openwall.com/lists/musl/2026/04/10/3/1),
+# CVE-2026-6042 iconv (https://www.openwall.com/lists/musl/2026/04/03/2/1).
+# The patched tree is published in this index as musl-1.2.6-aos1.tar.gz,
+# since AOS has no patch tool to apply them on the machine. Move to 1.2.7
+# from upstream when it is released.
+#
+# The dynamic loader goes in the package's lib/ (--syslibdir), not /lib:
+# a dynamically linked musl program runs only where this package is;
+# static linking is what musl-gcc is for. MIT.
+
+recipe_version = 1
+
+[package]
+name         = "musl"
+organization = "aos"
+version      = "1.2.6"
+release      = 1
+kind         = "bin"
+summary      = "musl libc and musl-gcc: small static Linux programs from C (1.2.6 with the 2026 security patches)"
+license      = "MIT"
+homepage     = "https://musl.libc.org/"
+
+[[source]]
+url    = "https://github.com/Jaxilian/apm-recipes/releases/download/index/musl-1.2.6-aos1.tar.gz"
+sha256 = "a0c0ce51935cabd1dd66626f3080da37797d9f7a27e113541422123dec5e92e4"
+strip  = 1
+
+[requires]
+run = ["gcc"]
+
+[provides]
+command = ["musl-gcc"]
+
+[build]
+build = '''
+./configure --prefix=$APM_PREFIX --syslibdir=$APM_PREFIX/lib
+make -j$APM_JOBS
+'''
+install = '''
+make DESTDIR=$APM_DESTDIR install
+rm -f $APM_DESTDIR$APM_PREFIX/lib/ld-musl-x86_64.so.1
+ln -s libc.so $APM_DESTDIR$APM_PREFIX/lib/ld-musl-x86_64.so.1
+'''
+
+[[dependencies]]
+name         = "devel"
+organization = "aos"
+track        = "*"
