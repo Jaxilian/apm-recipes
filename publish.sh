@@ -52,7 +52,7 @@ done
 # next Update. This machine publishes (it holds the key) and has the OS
 # tree beside this repository; a missing gate stops the publish.
 GATE=${SONAME_GATE:-../aos/br2ext/board/aos/soname-gate.sh}
-SEEDS="notepad images videos sound-recorder clock calendar calculator weather"
+SEEDS="notepad images videos sound-recorder clock calendar calculator weather pdfview camera scanner"
 is_seed() {
 	for s in $SEEDS; do
 		case "$1" in
