@@ -52,6 +52,15 @@ done
 # next Update. This machine publishes (it holds the key) and has the OS
 # tree beside this repository; a missing gate stops the publish.
 GATE=${SONAME_GATE:-../aos/br2ext/board/aos/soname-gate.sh}
+SEEDS="notepad images videos sound-recorder clock calendar calculator weather"
+is_seed() {
+	for s in $SEEDS; do
+		case "$1" in
+			aos-"$s"-[0-9]*) return 0 ;;
+		esac
+	done
+	return 1
+}
 keep=$(cat keep.txt index/keep.txt 2>/dev/null | sed 's/#.*//; s/ //g' | grep -v '^$' || true)
 for f in index/*.apkg; do
 	[ -f "$f" ] || continue
@@ -60,6 +69,9 @@ for f in index/*.apkg; do
 	[ "$f" = "$newest" ] && continue
 	"$GATE" "$f" "$newest"
 	b=$(basename "$f"); b=${b%.*.apkg}
+	if is_seed "$b"; then
+		continue
+	fi
 	if echo "$keep" | grep -qx "$b"; then
 		echo "kept: $f (keep.txt)"; continue
 	fi
@@ -73,6 +85,15 @@ done
 # and the current one; apm's find and Software show one row anyway.
 for old in $(ls index/aos-devel-*.apkg 2>/dev/null | sort -V | head -n -2); do
 	echo "old devel: $old"; rm -f "$old" "$old.minisig"
+done
+
+for s in $SEEDS; do
+	rels=$(ls index/aos-"$s"-[0-9]*.apkg 2>/dev/null | sed 's/.*-\([0-9]*\)\.[^.]*\.apkg$/\1 &/' | sort -n)
+	pre=$(echo "$rels" | awk '$1 != "" && $1 < 1000 { print $2 }')
+	old=$(echo "$rels" | awk '$1 >= 1000 { print $2 }' | head -n -2)
+	for f in $pre $old; do
+		echo "old seed: $f"; rm -f "$f" "$f.minisig"
+	done
 done
 
 "$APM" index index --sign
