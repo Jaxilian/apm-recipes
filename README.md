@@ -7,12 +7,17 @@ stable and costs nothing to serve.
 
 ## Use it
 
+There is no sudo on AOS. A command that changes the system store runs
+apm again through `aos-root apm ...` by itself, which asks for an
+administrator's password once per 15 minutes (`--user` uses your own
+store instead):
+
 ```sh
-sudo apm repo add main https://github.com/Jaxilian/apm-recipes/releases/download/index
-sudo apm key trust "$(curl -sL https://raw.githubusercontent.com/Jaxilian/apm-recipes/main/keys/apm.pub | sed -n 2p)"
-sudo apm update
+apm repo add main https://github.com/Jaxilian/apm-recipes/releases/download/index
+apm key trust "$(curl -sL https://raw.githubusercontent.com/Jaxilian/apm-recipes/main/keys/apm.pub | sed -n 2p)"
+apm update
 apm find images
-sudo apm install images
+apm install images
 ```
 
 `key trust` takes a file path or the key's base64 (the second line of a
