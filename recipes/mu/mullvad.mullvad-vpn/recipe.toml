@@ -52,6 +52,7 @@ env            = [
     "MULLVAD_RPC_SOCKET_PATH={runtime}/mullvad-vpn",
 ]
 restart_signal = "SIGUSR1"
+root_dirs      = ["settings"]
 sysctl         = ["net/ipv4/conf/all/src_valid_mark",
                   "net/ipv4/conf/all/arp_ignore"]
 
