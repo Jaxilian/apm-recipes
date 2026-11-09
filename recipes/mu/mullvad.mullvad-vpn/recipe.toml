@@ -1,0 +1,78 @@
+# Mullvad VPN, from Mullvad's own GitHub release (mullvad/mullvadvpn-app):
+# the amd64 .deb, unpacked (apm reads a .deb since v0.1.13). Nothing in it
+# is modified. The sha256 is the one GitHub records for the asset in the
+# 2026.5 release; the .deb's detached signature
+# (MullvadVPN-2026.5_amd64.deb.asc) was checked with gpg against Mullvad's
+# code signing key (https://mullvad.net/media/mullvad-code-signing.asc,
+# A1198702 FC3E0A09 A9AE5B75 D5A1D4F2 66DE8DDF, signing subkey CA83A461
+# 53BC58D6 9518ED49 A26581F2 19C8314C), as downloaded on 2026-11-09.
+#
+# GPL-3.0-or-later (the .deb's control file), with Electron's and
+# Chromium's licences in the package. Fetched from GitHub, never mirrored.
+
+recipe_version = 1
+
+[package]
+name         = "mullvad-vpn"
+organization = "mullvad"
+version      = "2026.5.0"
+release      = 1
+min_aos      = "0.4.63"
+kind         = "app"
+summary      = "Mullvad VPN"
+license      = "GPL-3.0-or-later"
+homepage     = "https://mullvad.net/"
+
+[[source]]
+url    = "https://github.com/mullvad/mullvadvpn-app/releases/download/2026.5/MullvadVPN-2026.5_amd64.deb"
+sha256 = "aa6bd00452588597f50e8ca2f02bb91e9c295c4f01b0ae907354552e7428e7ab"
+
+[[dependencies]]
+name         = "gtk3"
+organization = "runtime"
+track        = "*"
+
+[provides]
+command = ["mullvad"]
+
+[sandbox]
+home           = "private"
+service_socket = "/run/mullvad-vpn"
+
+[service]
+exec           = "bin/mullvad-daemon"
+args           = ["-v", "--disable-stdout-timestamps"]
+caps           = ["CAP_NET_ADMIN", "CAP_NET_RAW"]
+tun            = true
+env            = [
+    "MULLVAD_RESOURCE_DIR={package}/mullvad/resources",
+    "MULLVAD_SETTINGS_DIR={state}/settings",
+    "MULLVAD_CACHE_DIR={state}/cache",
+    "MULLVAD_LOG_DIR={state}/log",
+    "MULLVAD_RPC_SOCKET_PATH={runtime}/mullvad-vpn",
+]
+restart_signal = "SIGUSR1"
+sysctl         = ["net/ipv4/conf/all/src_valid_mark",
+                  "net/ipv4/conf/all/arp_ignore"]
+
+[launcher]
+name       = "Mullvad VPN"
+comment    = "Mullvad VPN client"
+exec       = "bin/mullvad-gui"
+icon       = "mullvad/mullvad-vpn.png"
+categories = ["Network"]
+terminal   = false
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/mullvad $D/bin
+cp -a "$APM_SRC/opt/Mullvad VPN/." $D/mullvad/
+install -m 755 $APM_SRC/usr/bin/mullvad-daemon $APM_SRC/usr/bin/mullvad $D/bin/
+install -m 644 $APM_SRC/usr/share/icons/hicolor/256x256/apps/mullvad-vpn.png $D/mullvad/mullvad-vpn.png
+cat > $D/bin/mullvad-gui <<WRAP
+#!/bin/sh
+exec /opt/apm/packages/runtime/gtk3/current/bin/gtk3-run $APM_PREFIX/mullvad/mullvad-gui --ozone-platform=wayland --ignore-socket-uid-check "\$@"
+WRAP
+chmod 755 $D/bin/mullvad-gui
+'''
