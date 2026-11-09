@@ -20,6 +20,14 @@ set -e
 cd "$(dirname "$0")"
 APM=${APM:-apm}
 TAG=index
+REPO=Jaxilian/apm-recipes
+LOCK=${AOS_PUBLISH_LOCK:-$(cd .. && pwd)/tmp-build/publish.lock}
+if [ -z "${AOS_PUBLISH_LOCKED:-}" ]; then
+	mkdir -p "$(dirname "$LOCK")"
+	exec 9>"$LOCK"
+	export AOS_PUBLISH_LOCKED=1
+fi
+flock -n 9 || { echo "publish.sh: another publish is running ($LOCK)" >&2; exit 1; }
 
 # A recipe's source of truth is recipes/<xx>/<org>.<name>/recipe.toml; the
 # index directory gets a flat copy, named so `apm index` can list it.
@@ -99,36 +107,29 @@ done
 "$APM" index index --sign
 [ "$1" = --local ] && exit 0
 
-# One release, created once; every publish replaces its assets. Old index
-# zips are removed so the release does not accumulate one per publish.
-gh release view "$TAG" >/dev/null 2>&1 || \
-	gh release create "$TAG" --title "package index" \
+gh release view "$TAG" -R "$REPO" >/dev/null 2>&1 || \
+	gh release create "$TAG" -R "$REPO" --title "package index" \
 		--notes "The apm package index. Point apm at this release's download URL." \
 		--latest=false
-for old in $(gh release view "$TAG" --json assets -q '.assets[].name' | grep '^index-.*\.zip$'); do
-	[ -f "index/$old" ] || gh release delete-asset "$TAG" "$old" -y
-done
-have=$(gh release view "$TAG" --json assets -q '.assets[]|select(.state=="uploaded")|"\(.name) \(.size)"')
+GHUP=${GHUP:-../aos/br2ext/board/aos/ghup.py}
 pkgs="" meta=""
 for f in index/*; do
 	[ -f "$f" ] || continue
 	case "$f" in
-		*.apkg)
-			echo "$have" | grep -qx "$(basename "$f") $(stat -c %s "$f")" || pkgs="$pkgs $f"
-			;;
+		*.apkg) pkgs="$pkgs $f" ;;
+		index/stamp.toml|index/stamp.toml.minisig) ;;
 		*) meta="$meta $f" ;;
 	esac
 done
-upload() {
-	[ -n "$1" ] || return 0
-	n=0
-	until gh release upload "$TAG" --clobber $1; do
-		n=$((n + 1)); [ $n -lt 3 ] || exit 1
-		echo "upload failed, retrying ($n)" >&2; sleep 5
-	done
-}
-echo "upload: $(echo $pkgs | wc -w) packages new or changed, $(echo $meta | wc -w) index files"
-upload "$pkgs"
-upload "$meta"
-echo "published: https://github.com/Jaxilian/apm-recipes/releases/download/$TAG/stamp.toml"
+[ -z "$pkgs" ] || python3 "$GHUP" "$REPO" "$TAG" $pkgs
+python3 "$GHUP" --replace "$REPO" "$TAG" $meta index/stamp.toml index/stamp.toml.minisig
+zips=$(gh release view "$TAG" -R "$REPO" --json assets -q '.assets[]|select(.name|startswith("index-") and endswith(".zip"))|"\(.createdAt) \(.name)"' | sort)
+prev=""
+for z in $(echo "$zips" | cut -d' ' -f2); do
+	[ -f "index/$z" ] || prev="$z"
+done
+for old in $(echo "$zips" | cut -d' ' -f2); do
+	[ -f "index/$old" ] || [ "$old" = "$prev" ] || gh release delete-asset "$TAG" "$old" -R "$REPO" -y
+done
+echo "published: https://github.com/$REPO/releases/download/$TAG/stamp.toml"
 echo "note: the edge cache serves the previous stamp.toml for a few minutes" >&2
