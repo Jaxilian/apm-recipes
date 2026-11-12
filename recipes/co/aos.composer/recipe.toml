@@ -15,13 +15,13 @@ recipe_version = 1
 name         = "composer"
 organization = "aos"
 version      = "2.11.1"
-release      = 1
+release      = 2
 kind         = "bin"
 summary      = "Composer: dependency management for PHP projects"
 license      = "MIT"
 homepage     = "https://getcomposer.org/"
 # [provides] env (apm v0.1.40, AOS 0.4.37).
-min_aos      = "0.4.53"
+min_aos      = "0.4.75"
 
 [[source]]
 url    = "https://getcomposer.org/download/2.11.1/composer.phar"
@@ -35,6 +35,7 @@ track        = "*"
 [provides]
 command = ["composer"]
 env     = ["COMPOSER_HOME=AppData/aos.composer"]
+cache   = ["cache"]
 
 [build]
 install = '''
