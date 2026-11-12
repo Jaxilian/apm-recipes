@@ -44,6 +44,11 @@ Three kinds of package, one index:
 | recipe | `<org>.<name>.recipe.toml` | downloads, verifies, **compiles** with the gcc and cargo AOS ships |
 | vendor binary | a recipe whose source is the vendor's own download | downloads from the vendor, verifies against the recipe's sha256 |
 
+`build/<org>.<name>/recipe.toml` holds the recipes the publisher builds
+with `apm build` and puts in `index/` as an apkg, for an upstream download
+too large for every client (aos/lldb: 1.9 GB of LLVM for 85 MB kept).
+publish.sh does not list them as recipes.
+
 ## Add a package
 
 1. Write `recipes/<xx>/<org>.<name>/recipe.toml`. `apm new` scaffolds one;
