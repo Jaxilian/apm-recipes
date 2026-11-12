@@ -1,0 +1,136 @@
+# LLDB, LLVM's debugger, with lldb-dap (the Debug Adapter Protocol server,
+# on stdio) for editors, from LLVM's own prebuilt Linux tarball:
+# https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.5/LLVM-23.1.5-Linux-X64.tar.xz
+# The sha256 is GitHub's digest of the asset, checked against the
+# download on 2026-11-12. Apache-2.0 WITH LLVM-exception. Fetched from
+# GitHub, never mirrored. The .tar.zst beside it is smaller but needs
+# zstd --long=30, which a plain tar -xf does not pass.
+#
+# Only lldb's own files are kept: liblldb, its Python module (built for
+# Python 3.14, the core's), lldb, lldb-dap, lldb-server, lldb-argdumper.
+# The tarball links ncurses as Debian splits it (libtinfo.so.6, versioned
+# symbols); the core's ncurses is one unversioned libncurses.so.6, so
+# install points the libtinfo NEEDED at libncurses and drops the ncurses
+# version needs, or every start prints ld.so warnings.
+#
+# lldb and lldb-dap are wrappers that run the debugger with HOME at
+# ~/AppData/aos.lldb (its caches, history and .lldbinit) and give the
+# debugged program the real HOME back through target.env-vars.
+
+recipe_version = 1
+
+[package]
+name         = "lldb"
+organization = "aos"
+version      = "23.1.5"
+release      = 1
+kind         = "bin"
+summary      = "LLDB: the LLVM debugger, with lldb-dap for editors"
+license      = "Apache-2.0 WITH LLVM-exception"
+homepage     = "https://lldb.llvm.org/"
+
+[[source]]
+url    = "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.5/LLVM-23.1.5-Linux-X64.tar.xz"
+sha256 = "f72edb0b36580ece7f52e23858f00c18fad4e87395ea7ad05d7e55c39f8fc78a"
+strip  = 1
+
+[provides]
+command = ["lldb", "lldb-dap", "lldb-server", "lldb-argdumper"]
+
+[build]
+install = '''
+D=$APM_DESTDIR$APM_PREFIX
+install -d $D/bin $D/libexec $D/lib
+install -m 755 bin/lldb bin/lldb-dap $D/libexec/
+install -m 755 bin/lldb-server bin/lldb-argdumper $D/bin/
+cp -a lib/liblldb.so lib/liblldb.so.23.1 lib/liblldb.so.23.1.5 lib/python3.14 $D/lib/
+
+python3 -I - $D/lib/liblldb.so.23.1.5 $D/bin/lldb-server <<'PY'
+import struct, sys
+
+DROP = {b"libncurses.so.6", b"libpanel.so.6", b"libform.so.6", b"libtinfo.so.6"}
+
+def cstr(b, off):
+    return bytes(b[off:b.index(b"\0", off)])
+
+def fix(path):
+    with open(path, "rb") as f:
+        b = bytearray(f.read())
+    shoff, = struct.unpack_from("<Q", b, 0x28)
+    shentsize, shnum = struct.unpack_from("<HH", b, 0x3a)
+    secs = []
+    for i in range(shnum):
+        s = struct.unpack_from("<IIQQQQIIQQ", b, shoff + i * shentsize)
+        secs.append((shoff + i * shentsize, s))
+    vr = [x for x in secs if x[1][1] == 0x6ffffffe]
+    vs = [x for x in secs if x[1][1] == 0x6fffffff]
+    dy = [x for x in secs if x[1][1] == 6]
+    if not vr or not vs or not dy:
+        raise SystemExit(f"{path}: no version sections")
+    vr_hdr, vr_sec = vr[0]
+    strtab = secs[vr_sec[6]][1][4]
+    start = vr_sec[4]
+    kept = []
+    gone = set()
+    off = start
+    while True:
+        ver, cnt, file, aux, nxt = struct.unpack_from("<HHIII", b, off)
+        auxes = []
+        a = off + aux
+        for _ in range(cnt):
+            h, fl, other, name, anext = struct.unpack_from("<IHHII", b, a)
+            auxes.append((h, fl, other, name))
+            a += anext
+        if cstr(b, strtab + file) in DROP:
+            gone.update(x[2] for x in auxes)
+        else:
+            kept.append((ver, file, auxes))
+        if nxt == 0:
+            break
+        off += nxt
+    end = start + vr_sec[5]
+    out = bytearray()
+    for i, (ver, file, auxes) in enumerate(kept):
+        size = 16 + 16 * len(auxes)
+        nxt = 0 if i == len(kept) - 1 else size
+        out += struct.pack("<HHIII", ver, len(auxes), file, 16, nxt)
+        for j, (h, fl, other, name) in enumerate(auxes):
+            anext = 0 if j == len(auxes) - 1 else 16
+            out += struct.pack("<IHHII", h, fl, other, name, anext)
+    b[start:end] = out + bytes(end - start - len(out))
+    struct.pack_into("<I", b, vr_hdr + 0x2c, len(kept))
+    vs_sec = vs[0][1]
+    for o in range(vs_sec[4], vs_sec[4] + vs_sec[5], 2):
+        v, = struct.unpack_from("<H", b, o)
+        if v & 0x7fff in gone:
+            struct.pack_into("<H", b, o, 1)
+    dyn = dy[0][1]
+    ents = [(o,) + struct.unpack_from("<qQ", b, o) for o in range(dyn[4], dyn[4] + dyn[5], 16)]
+    ncurses = [v for o, t, v in ents if t == 1 and cstr(b, strtab + v) == b"libncurses.so.6"]
+    if not ncurses:
+        raise SystemExit(f"{path}: no libncurses.so.6 NEEDED")
+    for o, t, v in ents:
+        if t == 1 and cstr(b, strtab + v) == b"libtinfo.so.6":
+            struct.pack_into("<Q", b, o + 8, ncurses[0])
+        if t == 0x6fffffff:
+            struct.pack_into("<Q", b, o + 8, len(kept))
+    with open(path, "wb") as f:
+        f.write(b)
+
+for p in sys.argv[1:]:
+    fix(p)
+PY
+
+for b in lldb lldb-dap; do
+	opt=-O
+	[ $b = lldb-dap ] && opt=-c
+	cat > $D/bin/$b <<WRAP
+#!/bin/sh
+h=\$HOME
+d=\$HOME/AppData/aos.lldb
+mkdir -p "\$d"
+HOME=\$d exec "\$(dirname "\$(readlink -f "\$0")")/../libexec/$b" $opt "settings set target.env-vars \\"HOME=\$h\\"" "\$@"
+WRAP
+	chmod 755 $D/bin/$b
+done
+'''
