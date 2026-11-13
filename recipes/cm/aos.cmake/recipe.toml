@@ -15,7 +15,7 @@ recipe_version = 1
 [package]
 name         = "cmake"
 organization = "aos"
-version      = "4.4.5"
+version      = "4.5.0"
 release      = 1
 kind         = "bin"
 summary      = "CMake: the cross-platform build system generator, with ctest and cpack"
@@ -23,8 +23,8 @@ license      = "BSD-3-Clause"
 homepage     = "https://cmake.org/"
 
 [[source]]
-url    = "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-linux-x86_64.tar.gz"
-sha256 = "ed85135c5a5135b45e50423cb406dea04ca3338da0b8ef3c9ede963559680be0"
+url    = "https://github.com/Kitware/CMake/releases/download/v4.5.0/cmake-4.5.0-linux-x86_64.tar.gz"
+sha256 = "81f0d5b0960fb6adc8197030ffc827fba937640d51e73e39e0e9e40d88c66f6f"
 strip  = 1
 
 [provides]
