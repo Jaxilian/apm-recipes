@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "caddyserver/caddy"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^caddy_[\d.]+_linux_amd64\.tar\.gz$'

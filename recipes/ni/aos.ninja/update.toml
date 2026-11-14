@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "ninja-build/ninja"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^ninja-linux\.zip$'

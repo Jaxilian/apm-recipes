@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "jgm/pandoc"
+tag   = '^(\d+(?:\.\d+)+)$'
+asset = '^pandoc-[\d.]+-linux-amd64\.tar\.gz$'

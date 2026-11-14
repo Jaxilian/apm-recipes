@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "direnv/direnv"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^direnv\.linux-amd64$'

@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "casey/just"
+tag   = '^(\d+\.\d+\.\d+)$'
+asset = '^just-[\d.]+-x86_64-unknown-linux-musl\.tar\.gz$'

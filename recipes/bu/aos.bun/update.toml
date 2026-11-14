@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "oven-sh/bun"
+tag   = '^bun-v(\d+\.\d+\.\d+)$'
+asset = '^bun-linux-x64\.zip$'

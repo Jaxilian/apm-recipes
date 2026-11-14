@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "sharkdp/fd"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^fd-v[\d.]+-x86_64-unknown-linux-musl\.tar\.gz$'

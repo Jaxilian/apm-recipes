@@ -1,0 +1,6 @@
+[[source]]
+kind         = "json"
+page         = "https://go.dev/dl/?mode=json"
+version_key  = "0.version"
+url          = "https://go.dev/dl/{version}.linux-amd64.tar.gz"
+sums         = "https://go.dev/dl/?mode=json"

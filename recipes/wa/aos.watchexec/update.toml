@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "watchexec/watchexec"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^watchexec-[\d.]+-x86_64-unknown-linux-musl\.tar\.xz$'

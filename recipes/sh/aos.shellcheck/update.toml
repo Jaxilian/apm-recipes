@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "koalaman/shellcheck"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^shellcheck-v[\d.]+\.linux\.x86_64\.tar\.xz$'

@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "vi/websocat"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^websocat\.x86_64-unknown-linux-musl$'

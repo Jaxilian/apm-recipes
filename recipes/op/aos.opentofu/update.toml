@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "opentofu/opentofu"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^tofu_[\d.]+_linux_amd64\.zip$'

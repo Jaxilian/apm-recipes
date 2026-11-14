@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "astral-sh/uv"
+tag   = '^(\d+\.\d+\.\d+)$'
+asset = '^uv-x86_64-unknown-linux-gnu\.tar\.gz$'

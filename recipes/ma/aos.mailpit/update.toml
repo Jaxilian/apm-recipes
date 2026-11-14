@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "axllent/mailpit"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^mailpit-linux-amd64\.tar\.gz$'

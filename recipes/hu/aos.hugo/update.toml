@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "gohugoio/hugo"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^hugo_extended_[\d.]+_linux-amd64\.tar\.gz$'

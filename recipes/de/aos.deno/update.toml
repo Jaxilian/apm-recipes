@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "denoland/deno"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^deno-x86_64-unknown-linux-gnu\.zip$'

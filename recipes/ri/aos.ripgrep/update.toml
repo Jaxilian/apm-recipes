@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "BurntSushi/ripgrep"
+tag   = '^(\d+\.\d+\.\d+)$'
+asset = '^ripgrep-[\d.]+-x86_64-unknown-linux-musl\.tar\.gz$'

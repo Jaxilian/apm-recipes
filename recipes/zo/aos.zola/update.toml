@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "getzola/zola"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^zola-v[\d.]+-x86_64-unknown-linux-gnu\.tar\.gz$'

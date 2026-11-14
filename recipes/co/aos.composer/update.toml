@@ -1,0 +1,6 @@
+[[source]]
+kind        = "json"
+page        = "https://getcomposer.org/versions"
+version_key = "stable.0.version"
+url         = "https://getcomposer.org/download/{version}/composer.phar"
+sums        = "{url}.sha256sum"

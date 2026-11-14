@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "sharkdp/bat"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^bat-v[\d.]+-x86_64-unknown-linux-musl\.tar\.gz$'

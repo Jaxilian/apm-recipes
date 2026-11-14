@@ -1,0 +1,4 @@
+[[source]]
+kind     = "apt"
+packages = "https://deb.debian.org/debian/dists/forky/main/binary-amd64/Packages.xz"
+package  = "ovmf-generic"

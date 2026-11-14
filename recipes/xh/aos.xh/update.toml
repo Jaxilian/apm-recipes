@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "ducaale/xh"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^xh-v[\d.]+-x86_64-unknown-linux-musl\.tar\.gz$'

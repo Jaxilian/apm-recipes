@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "FiloSottile/mkcert"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^mkcert-v[\d.]+-linux-amd64$'

@@ -1,0 +1,5 @@
+[[source]]
+kind  = "github"
+repo  = "junegunn/fzf"
+tag   = '^v(\d+\.\d+\.\d+)$'
+asset = '^fzf-[\d.]+-linux_amd64\.tar\.gz$'
