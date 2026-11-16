@@ -12,7 +12,7 @@ recipe_version = 1
 [package]
 name         = "pandoc"
 organization = "aos"
-version      = "3.13.0"
+version      = "3.14.0"
 release      = 1
 kind         = "bin"
 summary      = "pandoc: converts documents between Markdown, HTML, LaTeX, DOCX, EPUB and more"
@@ -20,8 +20,8 @@ license      = "GPL-2.0-or-later"
 homepage     = "https://pandoc.org/"
 
 [[source]]
-url    = "https://github.com/jgm/pandoc/releases/download/3.13/pandoc-3.13-linux-amd64.tar.gz"
-sha256 = "38aa33b325a2bc96a4c39409631212db55702f564250bcdbead180b3bf646389"
+url    = "https://github.com/jgm/pandoc/releases/download/3.14/pandoc-3.14-linux-amd64.tar.gz"
+sha256 = "c5f4720cdefb3f7bdc5d07202ef579feef0d1370773c873804dd8fdaa8c4f1b8"
 strip  = 1
 
 [provides]

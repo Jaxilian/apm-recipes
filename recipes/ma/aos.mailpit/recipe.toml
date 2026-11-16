@@ -13,7 +13,7 @@ recipe_version = 1
 [package]
 name         = "mailpit"
 organization = "aos"
-version      = "1.33.0"
+version      = "1.33.1"
 release      = 1
 kind         = "bin"
 summary      = "Mailpit: a local SMTP sink on port 1025 with a web inbox on 8025"
@@ -21,8 +21,8 @@ license      = "MIT"
 homepage     = "https://mailpit.axllent.org/"
 
 [[source]]
-url    = "https://github.com/axllent/mailpit/releases/download/v1.33.0/mailpit-linux-amd64.tar.gz"
-sha256 = "d0ec50080cbf3e7c1fa2cda2ee68125d7894175811084b1f8f47c6cfc6f487c8"
+url    = "https://github.com/axllent/mailpit/releases/download/v1.33.1/mailpit-linux-amd64.tar.gz"
+sha256 = "84d7fe375ebef25df26758984dc0d5d5e17d8c0734cb2e77be7873b14ab51716"
 
 [provides]
 command = ["mailpit"]

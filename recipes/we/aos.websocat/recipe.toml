@@ -11,7 +11,7 @@ recipe_version = 1
 [package]
 name         = "websocat"
 organization = "aos"
-version      = "1.14.1"
+version      = "1.14.2"
 release      = 1
 kind         = "bin"
 summary      = "websocat: talks to WebSocket servers from the terminal, or serves one"
@@ -19,8 +19,8 @@ license      = "MIT"
 homepage     = "https://github.com/vi/websocat"
 
 [[source]]
-url    = "https://github.com/vi/websocat/releases/download/v1.14.1/websocat.x86_64-unknown-linux-musl"
-sha256 = "66f8dd3a0394761556339117f8bb5123bddefd44e087af2a72ec22b0bd08d514"
+url    = "https://github.com/vi/websocat/releases/download/v1.14.2/websocat.x86_64-unknown-linux-musl"
+sha256 = "cd26f92cb507f620e2d54fe6e126f4dc191f3eee90f2b53bccf07eac0645ec84"
 
 [provides]
 command = ["websocat"]
