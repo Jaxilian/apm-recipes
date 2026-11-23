@@ -11,7 +11,7 @@ recipe_version = 1
 [package]
 name         = "ripgrep"
 organization = "aos"
-version      = "15.2.0"
+version      = "16.0.0"
 release      = 1
 kind         = "bin"
 summary      = "ripgrep: searches folders for a pattern, fast, skipping what .gitignore skips"
@@ -19,8 +19,8 @@ license      = "MIT OR Unlicense"
 homepage     = "https://github.com/BurntSushi/ripgrep"
 
 [[source]]
-url    = "https://github.com/BurntSushi/ripgrep/releases/download/15.2.0/ripgrep-15.2.0-x86_64-unknown-linux-musl.tar.gz"
-sha256 = "33e15bcf1624b25cdd2a55813a47a2f95dbe126268203e76aa6a585d1e7b149c"
+url    = "https://github.com/BurntSushi/ripgrep/releases/download/16.0.0/ripgrep-16.0.0-x86_64-unknown-linux-musl.tar.gz"
+sha256 = "54268ab4643c00a290a29b0086066d64b3f56236dd805ec64629a86f9bd29fd0"
 strip  = 1
 
 [provides]
