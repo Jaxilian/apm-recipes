@@ -49,10 +49,7 @@ done
 # one per line, # comments allowed: an app's closure names the exact build
 # it runs on, and that build must stay fetchable. The list is kept by hand
 # for now; P5 (closures in Software) will generate it from every published
-# app's newest closure plus the one before. An apm before 0.1.25 took the
-# first release listed, not the highest (aos/perl 5.42.3-2 over -5,
-# 2026-10-23), and machines on AOS 0.4.6 and older still run one, so the
-# kept builds are listed after the newest by `apm index` (v0.1.25+ sorts).
+# app's newest closure plus the one before.
 # The release is the number before ".<arch>.apkg".
 # Before the older one goes, the soname gate (the OS tree's
 # board/aos/soname-gate.sh): a new release of the same version must keep
@@ -104,7 +101,11 @@ for s in $SEEDS; do
 	done
 done
 
+ORDER=${INDEX_ORDER:-../apm-thirdparty/tools/index-ascending.py}
+[ -f "$ORDER" ] || { echo "publish.sh: no $ORDER; nothing was published" >&2; exit 1; }
 "$APM" index index --sign
+python3 -I "$ORDER" index
+"$APM" sign index/stamp.toml
 [ "$1" = --local ] && exit 0
 
 gh release view "$TAG" -R "$REPO" >/dev/null 2>&1 || \
