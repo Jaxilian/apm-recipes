@@ -14,7 +14,7 @@ recipe_version = 1
 [package]
 name         = "opentofu"
 organization = "aos"
-version      = "1.13.9"
+version      = "1.13.10"
 release      = 1
 kind         = "bin"
 summary      = "OpenTofu: infrastructure as code, the open Terraform"
@@ -24,8 +24,8 @@ homepage     = "https://opentofu.org/"
 min_aos      = "0.4.24"
 
 [[source]]
-url    = "https://github.com/opentofu/opentofu/releases/download/v1.13.9/tofu_1.13.9_linux_amd64.zip"
-sha256 = "bc44eb6b06446ba83bd4072114891987f590f66cca712737a7f1147c50c539ce"
+url    = "https://github.com/opentofu/opentofu/releases/download/v1.13.10/tofu_1.13.10_linux_amd64.zip"
+sha256 = "c1f0d6b34d8328f963d3b1ad10896fae30a6c6890596190ffef477dab991090f"
 
 [provides]
 command = ["tofu"]

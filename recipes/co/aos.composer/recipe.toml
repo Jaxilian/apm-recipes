@@ -14,7 +14,7 @@ recipe_version = 1
 [package]
 name         = "composer"
 organization = "aos"
-version      = "2.11.2"
+version      = "2.11.3"
 release      = 1
 kind         = "bin"
 summary      = "Composer: dependency management for PHP projects"
@@ -24,8 +24,8 @@ homepage     = "https://getcomposer.org/"
 min_aos      = "0.4.75"
 
 [[source]]
-url    = "https://getcomposer.org/download/2.11.2/composer.phar"
-sha256 = "dd158c0afd41d15fac89e1b4e47b5d42911fe316c3687cd5edac98319b25d028"
+url    = "https://getcomposer.org/download/2.11.3/composer.phar"
+sha256 = "04f8b003da4e3a2459056591fbfebd02b4dc3e5adeb158616b90cf55a65113ec"
 
 [[dependencies]]
 name         = "php"

@@ -2,7 +2,7 @@
 # the amd64 .deb, unpacked (apm reads a .deb since v0.1.13). Nothing in it
 # is modified. The sha256 is the one GitHub records for the asset in the
 # 2026.5 release; the .deb's detached signature
-# (MullvadVPN-2026.5_amd64.deb.asc) was checked with gpg against Mullvad's
+# (MullvadVPN-2026.6_amd64.deb.asc) was checked with gpg against Mullvad's
 # code signing key (https://mullvad.net/media/mullvad-code-signing.asc,
 # A1198702 FC3E0A09 A9AE5B75 D5A1D4F2 66DE8DDF, signing subkey CA83A461
 # 53BC58D6 9518ED49 A26581F2 19C8314C), as downloaded on 2026-11-09.
@@ -15,7 +15,7 @@ recipe_version = 1
 [package]
 name         = "mullvad-vpn"
 organization = "mullvad"
-version      = "2026.5.0"
+version      = "2026.6.0"
 release      = 1
 min_aos      = "0.4.63"
 kind         = "app"
@@ -24,8 +24,8 @@ license      = "GPL-3.0-or-later"
 homepage     = "https://mullvad.net/"
 
 [[source]]
-url    = "https://github.com/mullvad/mullvadvpn-app/releases/download/2026.5/MullvadVPN-2026.5_amd64.deb"
-sha256 = "aa6bd00452588597f50e8ca2f02bb91e9c295c4f01b0ae907354552e7428e7ab"
+url    = "https://github.com/mullvad/mullvadvpn-app/releases/download/2026.6/MullvadVPN-2026.6_amd64.deb"
+sha256 = "2fd44cb7c8f284ec03c98d0b8a519db49666f0a155c769792cce8c7ebf08174d"
 
 [[dependencies]]
 name         = "gtk3"
